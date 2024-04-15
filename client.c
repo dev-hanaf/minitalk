@@ -6,7 +6,7 @@
 /*   By: ahanaf <ahanaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 00:08:41 by ahanaf            #+#    #+#             */
-/*   Updated: 2024/04/14 20:00:36 by ahanaf           ###   ########.fr       */
+/*   Updated: 2024/04/15 17:54:37 by ahanaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,13 @@ void send_bit(int pid, unsigned char c)
             kill(pid, SIGUSR1);
         else
             kill(pid, SIGUSR2);
-        usleep(300);
+        usleep(1500);
         i--;    
     }
 }
 
+
+#include <time.h>
 
 int main(int ac, char *av[])
 {
@@ -78,6 +80,20 @@ int main(int ac, char *av[])
         send_bit(pid, (unsigned char)*av[2]);
         av[2]++;
     }
-    // send_bit(pid, '\n');
-    
+    clock_t start, end;
+    double cpu_time_used;
+
+    start = clock();
+
+    while (*av[2])
+    {
+        send_bit(pid, (unsigned char)*av[2]);
+        av[2]++;
+    }
+
+    end = clock();
+
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+    printf("Time taken to send 100 characters: %f seconds\n", cpu_time_used);
 }
