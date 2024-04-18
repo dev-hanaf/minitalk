@@ -7,13 +7,18 @@ NAME2 = server
 NAME3 = client_bonus
 NAME4 = server_bonus
 
+SRC_C = client.c
+SRC_S = server.c
+SRCB_C = client_bonus.c
+SRCB_S = server_bonus.c
 
-OBJ_CLIENT = client.o
-OBJ_SERVER = server.o
-OBJ_CLIENT_BONUS = client_bonus.o
-OBJ_SERVER_BONUS = server_bonus.o
+OBJ_CLIENT = $(SRC_C:.o=.c)
+OBJ_SERVER = $(SRC_S:.o=.c)
+OBJ_CLIENT_BONUS = $(SRCB_C:.o=.c)
+OBJ_SERVER_BONUS = $(SRCB_S:.o=.c)
 
 NAME = $(NAME1) $(NAME2)
+
 
 all: $(NAME1) $(NAME2)
 
@@ -32,10 +37,12 @@ $(NAME3) : $(OBJ_CLIENT_BONUS)
 $(NAME4) : $(OBJ_SERVER_BONUS)
 	$(CC) $(CFLAGS) $(OBJ_SERVER_BONUS) -o $(NAME4)
 
+
+
 clean:
 	rm -rf *.o
 
 fclean:clean
-	rm -rf $(NAME)
+	rm -rf $(NAME1) $(NAME2) $(NAME3) $(NAME4)
 
 re:fclean all
