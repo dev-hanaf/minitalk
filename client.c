@@ -6,7 +6,7 @@
 /*   By: ahanaf <ahanaf@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/14 00:08:41 by ahanaf            #+#    #+#             */
-/*   Updated: 2024/04/18 05:06:26 by ahanaf           ###   ########.fr       */
+/*   Updated: 2024/04/20 22:53:49 by ahanaf           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	ft_atoi(char *str)
 {
-	int	result;
-	int	sign;
+	long	result;
+	int		sign;
 
 	sign = 1;
 	result = 0;
@@ -30,6 +30,11 @@ int	ft_atoi(char *str)
 	while (*str >= 48 && *str <= 57)
 	{
 		result = result * 10 + (*str - 48);
+		if (result > INT_MAX)
+		{
+			write(2, RED"ERORR\nWrong Pid\n"NC, 23);
+			exit(1);
+		}
 		str++;
 	}
 	return (result * sign);
@@ -41,26 +46,15 @@ void	send_bit(int pid, unsigned char c)
 	unsigned char	bit;
 
 	i = 7;
-	while (i-- >= 0)
+	while (i >= 0)
 	{
 		bit = (c >> i) & 1;
 		if (bit)
-		{
-			if (kill(pid, SIGUSR1) < 0)
-			{
-				write(2, Red "BAD PID\n" NC, 21);
-				exit(EXIT_FAILURE);
-			}
-		}
+			kill(pid, SIGUSR1);
 		else
-		{
-			if (kill(pid, SIGUSR2) < 0)
-			{
-				write(2, Red "BAD PID\n" NC, 21);
-				exit(EXIT_FAILURE);
-			}
-		}
-		usleep(350);
+			kill(pid, SIGUSR2);
+		usleep(500);
+		i--;
 	}
 }
 
@@ -74,7 +68,7 @@ int	main(int ac, char *av[])
 		return (0);
 	}
 	pid = ft_atoi(av[1]);
-	if (pid == 0 || pid > INT_MAX || pid == -1)
+	if (pid <= 1 && pid >= -1)
 	{
 		write(1, "Invalid PID\n", 12);
 		return (0);
